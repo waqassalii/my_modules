@@ -1,0 +1,37 @@
+<odoo>
+  <data>
+    <record id="view_purchase_order_inherit_form" model="ir.ui.view">
+      <field name="name">purchase.order.inherit.view</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//button[@id='draft_confirm']" position="attributes">
+          <attribute name="invisible">state != 'draft' or hide_confirm_button</attribute>
+        </xpath>
+        <xpath expr="//button[@id='bid_confirm']" position="attributes">
+          <attribute name="invisible">state != 'sent' or hide_confirm_button</attribute>
+        </xpath>
+        <xpath expr="//button[@name='button_confirm']" position="after">
+          <button class="oe_highlight" id="button_send_approval" name="action_button_send_approval" string="Confirm Order"
+                  type="object" invisible="state not in ['draft','sent'] or is_request_sent == True or not hide_confirm_button"/>
+        </xpath>
+        <xpath expr="//sheet" position="inside">
+            <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1"/>
+        </xpath>
+        <xpath expr="//field[@name='partner_id']" position="after">
+          <field name="is_approved" invisible="1"/>
+          <field name="is_request_sent" invisible="1"/>
+          <field name="is_sentback" invisible="1"/>
+          <field name="hide_confirm_button" invisible="1"/>
+          <field name="is_cancelled" invisible="1"/>
+          <field name="po_approval_id" invisible="1"/>
+          <field name="sendback_reason" invisible="1"/>
+          <field name="alter_user_name" invisible="1"/>
+          <field name="alter_user_login" invisible="1"/>
+          <field name="update_lognote" invisible="1"/>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>

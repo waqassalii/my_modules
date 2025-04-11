@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_po_approval,po_approval,model_po_approval,base.group_user,1,1,1,1
+access_po_approval_line,po_approval_line,model_po_approval_line,base.group_user,1,1,1,1
+access_cancel_reason_wizard,cancel_reason_wizard,model_cancel_reason_wizard,base.group_user,1,1,1,1
+access_send_back_wizard,send_back_wizard,model_send_back_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,134 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="po_approval_list">
+            <field name="name">po approval list</field>
+            <field name="model">po.approval</field>
+            <field name="arch" type="xml">
+                <tree  create="false">
+                    <field name="company_name"/>
+                    <field name="location_name"/>
+                    <field name="po_name" decoration-bf="1"/>
+                    <field name="user_name"/>
+                    <field name="user_id"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                </tree>
+            </field>
+        </record>
+        <!-- explicit form view definition -->
+        <record model="ir.ui.view" id="po_approval_form">
+            <field name="name">po approval form</field>
+            <field name="model">po.approval</field>
+            <field name="arch" type="xml">
+                <form  create="false">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approve,confirm,cancel"/>
+                        <button id="button_to_approve" name="action_to_approve" string="To Approve" type="object" invisible="state not in ['draft']" class="btn-primary" groups="po_approval.group_po_procurement_manager"/>
+                        <button id="button_approve" name="action_approve" string="Approve" type="object" invisible="state not in ['to_approve']" class="btn-primary" groups="po_approval.group_po_cost_controller"/>
+                        <button id="button_confirm" name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="state not in ['approve']" groups="po_approval.group_po_finance_manager"/>
+                        <button id="button_draft" name="action_draft" string="Reset to Draft" type="object" invisible="state not in ['approve','cancel']"/>
+                        <button id="cancel_to_approve" name="action_open_cancel_wizard" string="Cancel" type="object" invisible="state not in ['draft']" groups="po_approval.group_po_procurement_manager"/>
+                        <button id="sendback_to_approve" name="action_open_sendback_wizard" string="Send Back" type="object" invisible="state not in ['draft']" groups="po_approval.group_po_procurement_manager"/>
+                        <button id="cancel_approve" name="action_open_cancel_wizard" string="Cancel" type="object" invisible="state not in ['to_approve']" groups="po_approval.group_po_cost_controller"/>
+                        <button id="sendback_approve" name="action_open_sendback_wizard" string="Send Back" type="object" invisible="state not in ['to_approve']" groups="po_approval.group_po_cost_controller"/>
+                        <button id="cancel_confirm" name="action_open_cancel_wizard" string="Cancel" type="object" invisible="state not in ['approve']" groups="po_approval.group_po_finance_manager"/>
+                        <button id="sendback_confirm" name="action_open_sendback_wizard" string="Send Back" type="object" invisible="state not in ['approve']" groups="po_approval.group_po_finance_manager"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger"
+                                invisible="state not in ('cancel')"/>
+                        <widget name="web_ribbon" title="Confirmed" bg_color="text-bg-success"
+                                invisible="state not in ('confirm')"/>
+                        <div class="oe_title">
+                            <span class="o_form_label">Request for Approval</span>
+                            <h1 class="d-flex">
+                                <field name="po_name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group readonly="1">
+                            <group>
+                                <field name="vendor_name"/>
+                                <field name="partner_ref"/>
+                                <field name="location_name"/>
+                                <field name="user_id"/>
+                                <field name="date_request"/>
+                            </group>
+                            <group>
+                                <field name="date_order"/>
+                                <field name="date_planned"/>
+                                <field name="user_name"/>
+                                <field name="date_approve"/>
+                                 <field name="cancel_reason" invisible="1"/>
+                                <field name="sendback_reason" invisible="1"/>
+                                <field name="is_sentback" invisible="1"/>
+                                <field name="is_cancelled" invisible="1"/>
+                            </group>
+                            <!--<field name="description" />-->
+                        </group>
+                        <group>
+                            <!-- credential fields-->
+                            <field name="user_login" invisible="1"/>
+                            <field name="from_url" invisible="1"/>
+                            <field name="user_password" password="True" invisible="1"/>
+                            <field name="po_id" invisible="1"/>
+                            <field name="db_name" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Order Lines">
+                                <field name="approval_lines">
+                                    <tree delete="false" editable="bottom">
+                                        <field name="name"/>
+                                        <field name="line_id" invisible="1" column_invisible="True"/>
+                                        <field name="is_line_changed" invisible="1" column_invisible="True"/>
+                                        <field name="product_id" invisible="1" column_invisible="True"/>
+                                        <field name="product_qty" readonly="0"/>
+                                        <field name="product_uom" readonly="1"/>
+                                        <field name="price_unit" readonly="0"/>
+                                        <field name="price_subtotal" readonly="1"/>
+                                        <field name="tax_id_name" readonly="1"/>
+                                        <field name="price_tax" readonly="1" column_invisible="True"/>
+                                        <field name="price_total" readonly="1"/>
+                                        <field name="currency_id" column_invisible="True"/>
+                                    </tree>
+                                </field>
+                                <group>
+                                    <div><field name="notes" widget="html"/></div>
+                                <group class="oe_subtotal_footer oe_right " colspan="2"
+                                       widget="account-tax-totals-field" name="sale_total">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="amount_untaxed"/>
+                                    <field name="amount_tax"/>
+                                    <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                                </group>
+
+                                <div class="oe_clear"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                        <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="po_approval_action_window">
+            <field name="name">Purchase Requisition</field>
+            <field name="res_model">po.approval</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Top menu item -->
+        <menuitem name="Requisitions" id="po_approval_menu_root"
+                  web_icon="po_approval,static/description/icon.png"/>
+        <!-- actions -->
+        <menuitem name="PO Approval" id="po_approval_menu_1_list" parent="po_approval_menu_root"
+                  action="po_approval_action_window"/>
+    </data>
+</odoo>

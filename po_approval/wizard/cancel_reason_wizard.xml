@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_cancel_reason_wizard_form" model="ir.ui.view">
+            <field name="name">Cancel Reason</field>
+            <field name="model">cancel.reason.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="cancel_reason"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Save" class="btn-primary" name="action_confirm_cancel" type="object"/>
+
+                        <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_cancel_reason_wizard" model="ir.actions.act_window">
+            <field name="name">Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">cancel.reason.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_cancel_reason_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <!--<menuitem id="menu_cancel_reason_wizard"
+                  name="Cancel Reason Wizard"
+                  parent="account.menu_finance_configuration"
+                  action="action_cancel_reason_wizard"/>-->
+    </data>
+</odoo>

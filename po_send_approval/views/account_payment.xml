@@ -1,0 +1,68 @@
+<odoo>
+    <data>
+        <record id="view_account_payment_inherit_tree" model="ir.ui.view">
+            <field name="name">account.payment.inherit.tree</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="ref_num"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_payment_inherit_form" model="ir.ui.view">
+            <field name="name">account.payment.inherit.view</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//div[hasclass('oe_title')]/h1" position="after">-->
+                <xpath expr="//field[@name='journal_id']" position="before">
+                    <field name="ref_num"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='ref']" position="after">-->
+                <xpath expr="//sheet" position="inside">
+                    <group string="Payment Approval fields" invisible="1">
+                        <field name="is_approved"/>
+                        <field name="is_request_sent"/>
+                        <field name="is_cancelled"/>
+                        <field name="acc_payment_approval_id"/>
+                        <field name="is_sentback"/>
+                        <field name="alter_user_name"/>
+                        <field name="alter_user_login"/>
+                        <field name="reason"/>
+                    </group>
+                </xpath>
+                <xpath expr="//button[@name='action_post']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_post']" position="after">
+                    <button class="oe_highlight" name="action_send_approval" string="Confirm"
+                            type="object" invisible="state not in ['draft'] or is_request_sent"/>
+                </xpath>
+                <xpath expr="//sheet" position="inside">
+                        <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--<record id="action_account_journal_payment_custom" model="ir.actions.act_window">
+            <field name="name">Customer Payments</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.view_account_payment_tree"/>
+            <field name="context">{'default_is_journal_payment': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Register a payment
+                </p><p>
+                Payments are used to register liquidity movements. You can process those payments by your own means or by using installed facilities.
+            </p>
+            </field>
+        </record>
+        <menuitem name="Journal Payments"
+                  action="action_account_journal_payment_custom"
+                  parent="account.menu_finance_entries_accounting_miscellaneous"
+                  id="menu_account_journal_payment"/>-->
+
+    </data>
+</odoo>

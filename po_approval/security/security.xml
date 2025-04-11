@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="po_requisition_approval_access_category">
+            <field name="name">Purchase Order Approval</field>
+        </record>
+        <record model="ir.module.category" id="po_requisition_approval_access_category_child">
+            <field name="name">PO Approval</field>
+            <field name="parent_id" ref="po_approval.po_requisition_approval_access_category"/>
+        </record>
+        <record id="group_po_procurement_manager" model="res.groups">
+            <field name="name">(1) Procurement Manager</field>
+            <field name="implied_ids" eval="False"/>
+            <field name="category_id" ref="po_approval.po_requisition_approval_access_category_child"/>
+        </record>
+        <record id="group_po_cost_controller" model="res.groups">
+            <field name="name">(2) Cost Controller</field>
+            <field name="implied_ids" eval="False"/>
+            <field name="category_id" ref="po_approval.po_requisition_approval_access_category_child"/>
+        </record>
+        <record id="group_po_finance_manager" model="res.groups">
+            <field name="name">(3) Finance Manager</field>
+            <field name="implied_ids" eval="False"/>
+            <field name="category_id" ref="po_approval.po_requisition_approval_access_category_child"/>
+        </record>
+    </data>
+</odoo>
