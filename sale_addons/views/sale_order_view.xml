@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_form_inherit_x_studio" model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherit.multiple.promo</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="studio_customization.odoo_studio_sale_ord_750b2374-f9ba-4717-943e-27aa0dc4c0ff"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_studio_payment_method']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_view_form_inherit_multiple_promo" model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherit.multiple.promo</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tax_totals_json']" position="after">
+                <field name="total_order_margin" groups="sale_addons.group_margin_access"/>
+                <field name="total_opex_cost"/>
+                <field name= "profitability"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="after">
+                <widget name="web_ribbon" title="Archived" bg_color="bg-warning"
+                        attrs="{'invisible': [('online_payment_fail', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//header" position="after">
+                <div class="alert alert-danger text-center o_form_header" role="alert"
+                     attrs="{'invisible':[('out_of_zone','=', False)]}">
+                    <a class="close" data-dismiss="alert" href="#" aria-label="Close">x</a>
+                    <div>
+                        <strong>Warning: The Branch is Out of Zone</strong>
+                        <field name="out_of_zone" invisible="1"/>
+                        <field name="line_status" invisible="1"/>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button string="Apply Promotion" name="action_multiple_promo" type="object" class="oe_highlight"/>
+                <button name="action_cancel_wizard" type="object" string="Cancel" attrs="{'invisible': ['|', ('state', 'not in', ['draft', 'sent','sale']), ('id', '=', False)]}" data-hotkey="z"/>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']"  position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="after">
+                <field name="product_specific_discount" invisible="1"/>
+                <field name="total_order_discount" invisible="1"/>
+                <field name="coupon_per_line" invisible="1"/>
+                <field name="promo_applied_json" invisible="1"/>
+                <field name="promo_ids" invisible="1"/>
+                <field name="is_in_transit" invisible="1"/>
+                <field name="in_transit_qty"/>
+                <field name="payment_term_charge" optional="hidden"/>
+                <field name="in_transit_tax" invisible="1"/>
+                <field name="in_transit_total" invisible="1"/>
+                <field name="in_transit_subtotal" invisible="1"/>
+                <field name="delivered_tax" invisible="1"/>
+                <field name="delivered_total" invisible="1"/>
+                <field name="delivered_subtotal" invisible="1"/>
+                <field name="reserved_qty" invisible="1"/>
+                <field name="status"/>
+                <field name="discount_per_line" invisible="1"/>
+                <field name="discount_product_id" invisible="1"/>
+                <!--                <field name="discount_line_specific" invisible="1"/>-->
+                <!--                <field name="discount_line_normal" invisible="1"/>-->
+                <field name="tax_line" invisible="1"/>
+                <field name="transit_discount" invisible="1"/>
+                <field name="delivered_discount" invisible="1"/>
+                <field name="discount_product_ids" widget="many2many_tags" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="after">
+                <field name="status" force_save="1"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="is_backend_order" invisible="1"/>
+                <field name="delivery_status" invisible="1"/>
+                <field name="use_delivered_qty" invisible="1"/>
+                <field name="transit_discount" invisible="1"/>
+                <field name="delivered_discount" invisible="1"/>
+                <field name="lang" invisible="1"/>
+                <field name="past_number_of_orders"/>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="merge_shipment" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='commitment_date']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_shipping_id']" position="after">
+                <field name="delivery_note"/>
+                <field name="online_payment_fail" readonly="1"/>
+                <field name="total_odoo_amount" invisible="1"/>
+                <field name="ordered_by"/>
+                <field name="cancellation_reason"/>
+                <field name="is_confirmed" invisible="1"/>
+                <field name="is_use_credit_balance" invisible="1"/>
+                <field name="printed_balance" invisible="1"/>
+                <field name="balance_left" invisible="1"/>
+                <field name="show_balance" invisible="1"/>
+                <field name="use_credit_balance" groups="base.group_no_one" force_save="1" invisible="1"/>
+                <field name="reconciled_balance" readonly="1" groups="base.group_no_one" invisible="1"/>
+                <field name="balance_credit_balance" readonly="1" groups="base.group_no_one" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm']" position="after">
+                <button string="Mark as delivered" name="action_mark_as_delivered" type="object" class="oe_highlight"
+                        attrs="{'invisible':['|',('is_confirmed','=', True)]}" states="sale"/>
+            </xpath>
+            <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                <field name="is_force_closed" invisible="1"/>
+                <field name="reason" string="Closure reason" attrs="{'invisible': [('is_force_closed', '=', False)]}"/>
+                <field name="is_use_custom_balance" invisible="1"/>
+                <field name="custom_balance" attrs="{'invisible': [('is_use_custom_balance','=', False)]}"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Credit Note">
+                    <field name="credit_note_ids" readonly="1">
+                        <tree editable="bottom">
+                            <field name="credit_note_id"/>
+                            <field name="amount"/>
+                            <field name="order_id" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Payment Method">
+                    <field name="so_payment_method_ids">
+                        <tree editable="bottom">
+                            <field name="payment_method"/>
+                            <field name="transaction_id"/>
+                            <field name="provider"/>
+                            <field name="amount"/>
+                            <field name="order_id" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Transfers">
+                    <field name="transfer_ids">
+                        <tree editable="bottom" create="0" delete="0">
+                            <field name="display_name" string="Transfer"/>
+                            <field name="date_deadline" attrs="{'readonly': [('state', 'in', ['done','cancel'])]}"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_view_tree_inherit_delivery_status" model="ir.ui.view">
+        <field name="name">sale.order.view.tree.inherit.delivery.status</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="delivery_status" decoration-danger="delivery_status == 'Waiting'"
+                       decoration-info="delivery_status == 'In Transit' or delivery_status == 'Partailly In Transit'"
+                       decoration-warning="delivery_status == 'Reserved' or delivery_status == 'Partially Reserved'"
+                       decoration-success="delivery_status == 'Delivered'"
+                       decoration-primary="delivery_status == 'Partially Delivered'" widget="badge" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_quotation_view_tree_inherit_delivery_status" model="ir.ui.view">
+        <field name="name">sale.quotation.view.tree.inherit.delivery.status</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="delivery_status" decoration-danger="delivery_status == 'Waiting'"
+                       decoration-info="delivery_status == 'In Transit' or delivery_status == 'Partailly In Transit'"
+                       decoration-warning="delivery_status == 'Reserved' or delivery_status == 'Partially Reserved'"
+                       decoration-success="delivery_status == 'Delivered'"
+                       decoration-primary="delivery_status == 'Partially Delivered'" widget="badge" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_view_search_inherit_quotation_inherit_delivery_status" model="ir.ui.view">
+        <field name="name">sale.order.view.tree.inherit.delivery.status</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="delivery_status"/>
+                <separator/>
+                <filter string="Delivered" name="delivered" domain="[('delivery_status', '=','Delivered')]"/>
+                <filter string="In Transit" name="in_transit" domain="[('delivery_status', '=','In Transit')]"/>
+                <filter string="Reserved" name="reserved" domain="[('delivery_status', '=','Reserved')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('delivery_status', '=','Cancelled')]"/>
+                <filter string="Waiting" name="waiting" domain="[('delivery_status', '=','Waiting')]"/>
+                <filter string="Returned" name="returned" domain="[('delivery_status', '=','Returned')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Delivery Status" name="delivery_status" context="{'group_by':'delivery_status'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!--    search view adding new filters-->
+    <record model="ir.ui.view" id="sale_order_view_search_inherit_triggers">
+        <field name="name">sale.order.view.search.inherit.triggers</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Partially Reserved" name="reserved"
+                        domain="[('delivery_status', '=','Partially Reserved')]"/>
+                <filter string="Partially Delivered" name="delivered"
+                        domain="[('delivery_status', '=','Partially Delivered')]"/>
+                <filter string="Partially Returned" name="returned"
+                        domain="[('delivery_status', '=','Partially Returned')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_sale_order_inherit_sale_addons">
+        <field name="name">view.sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='order_details']" position="inside">
+                <field name="payment_method" string="Payment method" attrs="{'readonly': [('state','not in',('draft'))]}"/>
+                <field name="remaining_order_line_ids" invisible="1"/>
+                <field name="payment_id"/>
+                <field name="online_payment_number"/>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button string="RESET TO DRAFT" name="action_to_draft" type="object" class="oe_highlight" states="pending"/>
+            </xpath>
+            <xpath expr="//group[@name='note_group']" position="before">
+                <div class="oe_right">
+                    <button name="action_apply_package_discount" class="btn btn-secondary"
+                            string="Package Discount" type="object" groups="base.group_user" states="draft,sent,sale"/>
+                    <button name="action_add_credit_notes" class="btn btn-secondary"
+                            string="Add wallet balance" type="object" groups="base.group_user" states="draft,sent,sale"/>
+                    <button name="action_add_payment_term" class="btn btn-secondary"
+                            string="Add payment term charge" type="object" groups="base.group_user" states="draft,sent,sale"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale_order_search_view_inherit_sale_addons" model="ir.ui.view">
+        <field name="name">sale_addons.sale.order.view.search.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='sales']" position="after">
+                <filter string="Customers TaxID-9" name="filter_9_digit_tax_id" domain="[('vat_length', '=', 9)]" help="Filter customers with a 9-digit tax ID"/>
+                <filter string="Customers TaxID-14" name="filter_14_digit_tax_id" domain="[('vat_length', '=', 14)]" help="Filter customers with a 14-digit tax ID"/>
+                <filter string="Merged Shipment" name="merge_shipment" domain="[('merge_shipment', '=', True)]" help="Filter merged shipment"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_sale_order_line_tree_inherit_sale_addons_expected_date">
+        <field name="name">view.sale.order.line.tree.inherit.expected.date</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//tree/field[@name='tax_id']" position="after">
+                <field name="expected_delivery_date"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

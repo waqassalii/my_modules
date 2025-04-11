@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--      tree view , tree view-->
+        <record model="ir.ui.view" id="brand_banner_list">
+            <field name="name">brand.banner</field>
+            <field name="model">brand.banner</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="mobile_deep_link"/>
+                    <field name="web_deep_link"/>
+                </tree>
+            </field>
+        </record>
+        <!-- form view,  form view-->
+        <record model="ir.ui.view" id="brand_banner_form">
+            <field name="name">brand banner form</field>
+            <field name="model">brand.banner</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <div class="oe_title">
+                                <div class="oe_edit_only">
+                                    <label for="name" string="Name"/>
+                                </div>
+                                <h1 class="">
+                                    <field name="name"/>
+                                </h1>
+                            </div>
+                            <field name="image" nolabel="1" widget="image" class="oe_avatar" options="{'widget': 'image', 'download': true}"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="mobile_deep_link"/>
+                            </group>
+                            <group>
+                                <field name="web_deep_link"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_brand_banner">
+            <field name="name">Brand Banner</field>
+            <field name="res_model">brand.banner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first record!
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="Brand Banner"
+                  action="action_brand_banner"
+                  parent="sale.menu_sale_config"
+                  id="brand_banner_menu_root"/>
+
+    </data>
+</odoo>

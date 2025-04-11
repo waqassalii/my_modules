@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--      tree view , tree view-->
+        <record model="ir.ui.view" id="business_configuration_list">
+            <field name="name">business_configuration.items</field>
+            <field name="model">business.configuration</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="coins_to_value_conversion"/>
+                </tree>
+            </field>
+        </record>
+        <!-- form view,  form view-->
+        <record model="ir.ui.view" id="business_configuration_form">
+            <field name="name">business_configuration form</field>
+            <field name="model">business.configuration</field>
+            <field name="arch" type="xml">
+                <form create="false">
+                    <sheet>
+                        <group>
+                            <div class="oe_title">
+                                <div class="oe_edit_only">
+                                    <label for="name" string="Name"/>
+                                </div>
+                                <h1 class="">
+                                    <field name="name" required="1"/>
+                                </h1>
+                            </div>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="coins_to_value_conversion"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_business_configuration">
+            <field name="name">Business Configuration</field>
+            <field name="res_model">business.configuration</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first record!
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="Business Configuration"
+                  action="action_business_configuration"
+                  parent="sale.menu_sale_config"
+                  id="business_configuration_menu_root"/>
+
+    </data>
+</odoo>

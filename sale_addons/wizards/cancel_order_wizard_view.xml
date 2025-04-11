@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="cancel_order_wizard_view" model="ir.ui.view">
+        <field name="name">cancel.order.wizard.view.form</field>
+        <field name="model">cancel.order.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mark as delivered">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_id" invisible="1" />
+                            <field name="cancellation_reason" required="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Confirm" name="action_cancel" type="object" class="oe_highlight"/>
+                    <button string="Discard"  class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

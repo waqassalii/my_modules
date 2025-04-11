@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--      tree view , tree view-->
+        <record model="ir.ui.view" id="hot_search_items_list">
+            <field name="name">hot.search.items</field>
+            <field name="model">hot.search.items</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="arabic_name"/>
+                    <field name="rank"/>
+                </tree>
+            </field>
+        </record>
+        <!-- form view,  form view-->
+        <record model="ir.ui.view" id="hot_search_items_form">
+            <field name="name">Hot Search Items form</field>
+            <field name="model">hot.search.items</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <div class="oe_title">
+                                <div class="oe_edit_only">
+                                    <label for="name" string="Name"/>
+                                </div>
+                                <h1 class="">
+                                    <field name="name" required="1"/>
+                                </h1>
+                            </div>
+                            <field name="image" nolabel="1" required="1" widget="image" class="oe_avatar" options="{'widget': 'image', 'download': true}"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="arabic_name" required="1"/>
+                                <field name="rank" required="1"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                            <group>
+                               <field name="is_hot" required="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_hot_search_items">
+            <field name="name">Hot Search Items</field>
+            <field name="res_model">hot.search.items</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first record!
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="Hot Search Items"
+                  action="action_hot_search_items"
+                  parent="sale.menu_sale_config"
+                  id="hot_search_items_menu_root"/>
+
+    </data>
+</odoo>

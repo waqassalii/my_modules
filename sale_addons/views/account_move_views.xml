@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<record id="account_move_form_view_inherited" model="ir.ui.view">
+    <field name="name">account.move.form.view.inherited</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_move_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//group[@id='header_right_group']" position="inside">
+            <field name="payment_method"/>
+            <field name="sp_payment_id" invisible="True"/>
+            <field name="online_payment_number"/>
+            <field name="sale_order_id" groups="base.group_no_one"/>
+        </xpath>
+    </field>
+</record>
+</odoo>

@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sales_report" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//tbody[hasclass('sale_tbody')]" position="replace">
+            <t t-set="current_subtotal" t-value="0"/>
+            <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                <style>
+                    .product-name {
+                    direction: rtl;
+                    text-align: right;
+                    }
+                </style>
+
+                <t t-if="delivered">
+                    <t t-foreach="doc.order_line.filtered(lambda x: x.qty_delivered > 0)" t-as="line">
+
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.delivered_subtotal"
+                           groups="account.group_show_line_subtotals_tax_excluded"/>
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.delivered_total"
+                           groups="account.group_show_line_subtotals_tax_included"/>
+
+                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                            <t t-if="not line.display_type">
+                                <td name="td_name" class="text-right">
+                                    <div class="product-name">
+                                        <t t-esc="line.product_id.description_sale"/>
+                                    </div>
+                                </td>
+                                <td name="td_quantity" class="text-right">
+                                    <span t-field="line.qty_delivered"/>
+                                    <span t-field="line.product_uom"/>
+                                </td>
+                                <td name="td_priceunit" class="text-right">
+                                    <span t-field="line.price_unit"/>
+                                </td>
+                                <td t-if="display_discount" class="text-right"
+                                    groups="product.group_discount_per_so_line">
+                                    <span t-field="line.discount"/>
+                                </td>
+                                <td name="td_taxes" class="text-right">
+                                    <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                                </td>
+                                <td name="td_subtotal" class="text-right o_price_total">
+                                    <span t-field="line.delivered_subtotal"
+                                          groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <span t-field="line.delivered_total"
+                                          groups="account.group_show_line_subtotals_tax_included"/>
+                                </td>
+                            </t>
+                            <t t-if="line.display_type == 'line_section'">
+                                <td name="td_section_line" colspan="99" class="text-right">
+                                    <div class="product-name">
+                                        <div class="product-name">
+                                            <t t-esc="line.product_id.description_sale"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <t t-set="current_section" t-value="line"/>
+                                <t t-set="current_subtotal" t-value="0"/>
+                            </t>
+                            <t t-if="line.display_type == 'line_note'">
+                                <td name="td_note_line" colspan="99" class="text-right">
+                                    <div class="product-name">
+                                        <t t-esc="line.product_id.description_sale"/>
+                                    </div>
+                                </td>
+                            </t>
+                        </tr>
+
+                        <t t-if="current_section and (line_last or doc.order_line[line_index+1].display_type == 'line_section')">
+                            <tr class="is-subtotal text-right">
+                                <td name="td_section_subtotal" colspan="99">
+                                    <strong class="mr16">Subtotal</strong>
+                                    <span
+                                            t-esc="current_subtotal"
+                                            t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                    />
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not delivered">
+                    <t t-foreach="doc.order_line.filtered(lambda x: x.in_transit_qty > 0)" t-as="line">
+
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.in_transit_subtotal"
+                           groups="account.group_show_line_subtotals_tax_excluded"/>
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.in_transit_total"
+                           groups="account.group_show_line_subtotals_tax_included"/>
+
+                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                            <t t-if="not line.display_type">
+                                <td name="td_name" class="text-right">
+                                    <div class="product-name">
+                                        <t t-esc="line.product_id.description_sale"/>
+                                    </div>
+                                </td>
+                                <td name="td_quantity" class="text-right">
+                                    <span t-field="line.in_transit_qty"/>
+                                    <span t-field="line.product_uom"/>
+                                </td>
+                                <td name="td_priceunit" class="text-right">
+                                    <span t-field="line.price_unit"/>
+                                </td>
+                                <td t-if="display_discount" class="text-right"
+                                    groups="product.group_discount_per_so_line">
+                                    <span t-field="line.discount"/>
+                                </td>
+                                <td name="td_taxes" class="text-right">
+                                    <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                                </td>
+                                <td name="td_subtotal" class="text-right o_price_total">
+                                    <span t-field="line.in_transit_subtotal"
+                                          groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <span t-field="line.in_transit_total"
+                                          groups="account.group_show_line_subtotals_tax_included"/>
+                                </td>
+                            </t>
+                            <t t-if="line.display_type == 'line_section'">
+                                <td name="td_section_line" colspan="99" class="text-right">
+                                    <div class="product-name">
+                                        <t t-esc="line.product_id.description_sale"/>
+                                    </div>
+                                </td>
+                                <t t-set="current_section" t-value="line"/>
+                                <t t-set="current_subtotal" t-value="0"/>
+                            </t>
+                            <t t-if="line.display_type == 'line_note'">
+                                <td name="td_note_line" colspan="99" class="text-right">
+                                    <div class="product-name">
+                                        <t t-esc="line.product_id.description_sale"/>
+                                    </div>
+                                </td>
+                            </t>
+                        </tr>
+
+                        <t t-if="current_section and (line_last or doc.order_line[line_index+1].display_type == 'line_section')">
+                            <tr class="is-subtotal text-right">
+                                <td name="td_section_subtotal" colspan="99">
+                                    <strong class="mr16">Subtotal</strong>
+                                    <span
+                                            t-esc="current_subtotal"
+                                            t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                    />
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </t>
+            </t>
+            <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+                <t t-foreach="doc.order_line" t-as="line">
+
+                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"
+                       groups="account.group_show_line_subtotals_tax_excluded"/>
+                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_total"
+                       groups="account.group_show_line_subtotals_tax_included"/>
+
+                    <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                        <t t-if="not line.display_type">
+                            <td name="td_name" class="text-right">
+                                <div class="product-name">
+                                    <t t-esc="line.product_id.description_sale"/>
+                                </div>
+                            </td>
+                            <td name="td_quantity" class="text-right">
+                                <span t-field="line.product_uom_qty"/>
+                                <span t-field="line.product_uom"/>
+                            </td>
+                            <td name="td_priceunit" class="text-right">
+                                <span t-field="line.price_unit"/>
+                            </td>
+                            <td t-if="display_discount" class="text-right" groups="product.group_discount_per_so_line">
+                                <span t-field="line.discount"/>
+                            </td>
+                            <td name="td_taxes" class="text-right">
+                                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                            </td>
+                            <td name="td_subtotal" class="text-right o_price_total">
+                                <span t-field="line.price_subtotal"
+                                      groups="account.group_show_line_subtotals_tax_excluded"/>
+                                <span t-field="line.price_total"
+                                      groups="account.group_show_line_subtotals_tax_included"/>
+                            </td>
+                        </t>
+                        <t t-if="line.display_type == 'line_section'">
+                            <td name="td_section_line" colspan="99" class="text-right">
+                                <div class="product-name">
+                                    <t t-esc="line.product_id.description_sale"/>
+                                </div>
+                            </td>
+                            <t t-set="current_section" t-value="line"/>
+                            <t t-set="current_subtotal" t-value="0"/>
+                        </t>
+                        <t t-if="line.display_type == 'line_note'">
+                            <td name="td_note_line" colspan="99" class="text-right">
+                                <div class="product-name">
+                                    <t t-esc="line.product_id.description_sale"/>
+                                </div>
+                            </td>
+                        </t>
+                    </tr>
+
+                    <t t-if="current_section and (line_last or doc.order_line[line_index+1].display_type == 'line_section')">
+                        <tr class="is-subtotal text-right">
+                            <td name="td_section_subtotal" colspan="99">
+                                <strong class="mr16">Subtotal</strong>
+                                <span
+                                        t-esc="current_subtotal"
+                                        t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                />
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('clearfix')]" position="replace">
+            <div class="clearfix" name="so_total_summary">
+                <div id="total" class="row" name="total">
+                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                        <table class="table table-sm">
+                            <!-- Tax totals -->
+                            <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                                <t t-if="delivered">
+                                    <t t-set="tax_totals" t-value="json.loads(doc.proforma_delivered_tax_totals_json)"/>
+                                </t>
+                                <t t-if="not delivered">
+                                    <t t-set="tax_totals" t-value="json.loads(doc.proforma_tax_totals_json)"/>
+                                </t>
+                                <t t-call="sale_addons.proforma_document_tax_totals"/>
+                            </t>
+                            <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+                                <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
+                                <t t-call="account.document_tax_totals"/>
+                            </t>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <p>سيتم رفع الفاتورة الالكترونية في خلال ٤٨ ساعة</p>
+            </div>
+            <div class="row">
+                <div class="col-6 ml-auto">
+                    <strong style="display: inline;">ملحوظة في التوصيل :</strong>
+                    <span t-raw="doc.delivery_note"/>
+                </div>
+            </div>
+        </xpath>
+        <!--  from studio customizations       -->
+        <xpath expr="/t/t/div/h2" position="after">
+            <div class="row">
+                <div class="col-4">
+                    <span>New Column</span>
+                </div>
+                <div class="col-4">
+                    <span>New Column</span>
+                </div>
+                <div class="col-4">
+                    <span>New Column</span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]" position="after">
+            <div class="row address">
+                <div class="col-5">
+                    <div t-field="doc.partner_id" t-options-widget="'contact'"/>
+                </div>
+                <div class="col-5 offset-2"/>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">Customer</p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">
+                    <span style="font-weight: bolder;">
+                        <font style="color: rgb(231, 148, 57);">Customer Information</font>
+                    </span>
+                </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">
+                    <span style="font-weight: bolder;">
+                        <font style="color: rgb(231, 148, 57);">Customer Information</font>
+                    </span>
+                </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font" position="replace">
+            <font style="color: rgb(231, 148, 57);">
+                <p style="margin-bottom: 0px;">
+                    <font style="color: rgb(255, 156, 0);">Customer Information</font>
+                </p>
+            </font>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font" position="replace">
+            <font style="color: rgb(231, 148, 57);">
+                <p style="margin-bottom: 0px;">
+                    <font style="color: rgb(255, 156, 0);">Customer Information</font>
+                </p>
+            </font>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font" position="replace">
+            <font style="color: rgb(255, 156, 0);">
+                <p style="margin-bottom: 0px;">
+                    <font class="text-600" style="font-weight: bolder;">Customer Information</font>
+                </p>
+            </font>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="attributes">
+            <attribute name="class" separator=" " add="col-5" remove="col-4"/>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]" position="replace"/>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="attributes">
+            <attribute name="style" separator=";" add="margin-bottom:-5px"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]/div[1]/div" position="attributes">
+            <attribute name="style" separator=";" add="margin-left:5px"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]/div[1]/div" position="attributes">
+            <attribute name="style" separator=";" add="margin-top:-5px"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="attributes">
+            <attribute name="class" separator=" " add="col-6" remove="col-5"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]/div[1]" position="attributes">
+            <attribute name="class" separator=" " add="col-4" remove="col-5"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]/div[2]" position="inside">
+            <div t-field="doc.partner_shipping_id" t-options-widget="'contact'"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[2]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">
+                    <span style="font-weight: bolder;">
+                        <font class="text-800" style="font-size: 14px;">Delivery Information</font>
+                    </span>
+                </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[2]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">
+                    <span style="font-weight: bolder;">
+                        <font class="text-800" style="font-size: 14px;">Delivery Information</font>
+                    </span>
+                </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font/p" position="replace">
+            <p style="margin-bottom: 0px;"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font/p" position="replace">
+            <p style="margin-bottom: 0px;">
+                <font style="font-weight: bolder;" class="text-800">Customer Information</font>
+            </p>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font/p" position="replace">
+            <p style="margin-bottom: 0px;"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font/p" position="replace">
+            <p style="margin-bottom: 0px;">
+                <font style="font-weight: bolder;" class="text-800">Customer Information</font>
+            </p>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[2]/div[1]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone', 'mobile', 'email', 'vat']</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[2]/div[1]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone', 'mobile', 'email']</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[2]/div[1]" position="attributes">
+            <attribute name="t-options-no_marker">True</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[2]/div[1]" position="attributes">
+            <attribute name="t-options-no_marker">False</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[1]/div[1]" position="attributes">
+            <attribute name="t-options-separator">","</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[2]/div[1]" position="attributes">
+            <attribute name="t-options-separator">","</attribute>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]" position="attributes">
+            <attribute name="style" separator=";" add="margin-bottom:10px"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span/p/span/font/p/font/p/font" position="replace">
+            <font style="font-weight: bolder;" class="text-800">
+                <p style="margin-bottom: 0px;">Customer Information</p>
+            </font>
+        </xpath>
+        <xpath expr="/t/t/div/table/thead/tr/th[5]" position="after">
+            <th>
+                <span>Discount (%)</span>
+            </th>
+        </xpath>
+        <!--<xpath expr="/t/t/div/table/tbody/t[2]/tr/t[1]/td[5]" position="after">-->
+        <!--  <td>-->
+        <!--    <span t-field="line.discount"/>-->
+        <!--  </td>-->
+        <!--</xpath>-->
+        <!--<xpath expr="/t/t/div/table/tbody/t[2]/t[3]/tr/td" position="attributes">-->
+        <!--  <attribute name="colspan">100</attribute>-->
+        <!--</xpath>-->
+        <!--<xpath expr="/t[1]/t[1]/div[1]/table[1]/tbody[1]/t[2]/tr[1]/t[1]/td[6]" position="replace"/>-->
+        <xpath expr="/t[1]/t[1]/div[1]/table[1]/thead[1]/tr[1]/th[6]" position="replace"/>
+        <!--<xpath expr="/t[1]/t[1]/div[1]/table[1]/tbody[1]/t[2]" position="attributes">-->
+        <!--  <attribute name="t-foreach">doc.order_line</attribute>-->
+        <!--</xpath>-->
+        <xpath expr="/t/t/div/h2" position="after">
+            <div class="row">
+                <div class="col-3"/>
+                <div class="col-3">
+                    <span>
+                        <strong>Parent name:</strong>
+                        <br/>
+                    </span>
+                    <span t-field="doc.partner_id.parent_name"/>
+                </div>
+                <div class="col-3"/>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[3]" position="inside">
+            <span>
+                <strong>Delivery Address:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[3]" position="inside">
+            <span t-field="doc.partner_shipping_id"/>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]/span[2]" position="attributes">
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]/span[2]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone', 'email']</attribute>
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]/span[2]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone']</attribute>
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]/span[2]" position="attributes">
+            <attribute name="t-options-widget">""</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]/span[2]" position="attributes">
+            <attribute name="t-field">doc.partner_id.vat</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[3]" position="replace"/>
+        <xpath expr="/t/t/div/div[2]/div[3]" position="inside">
+            <span>
+                <strong>Tax ID:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[3]" position="inside">
+            <span t-field="doc.partner_id.vat"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="inside">
+            <span>
+                <strong>Name:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="inside">
+            <span t-field="doc.partner_id.name"/>
+        </xpath>
+        <xpath expr="/t/t/div/h2" position="after">
+            <div class="row">
+                <div class="col-3"/>
+                <div class="col-3"/>
+                <div class="col-3">
+                    <span>
+                        <strong>Tax ID:</strong>
+                        <br/>
+                    </span>
+                    <span t-field="doc.partner_id.vat"/>
+                </div>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[4]" position="inside">
+            <span>
+                <strong>Delivery Address:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[4]" position="inside">
+            <span t-field="doc.partner_shipping_id"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[2]" position="inside">
+            <span>
+                <strong>Parent name:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[2]" position="inside">
+            <span t-field="doc.partner_invoice_id" t-options-widget="'contact'"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="inside">
+            <span>
+                <strong>Name:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]" position="inside">
+            <span t-field="doc.partner_id.name"/>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[4]/span[2]" position="attributes">
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[4]/span[2]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone', 'email']</attribute>
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[2]/div[4]/span[2]" position="attributes">
+            <attribute name="t-options-fields">['name', 'address', 'phone']</attribute>
+            <attribute name="t-options-widget">"contact"</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]/div[1]" position="replace"/>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]" position="replace"/>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]" position="replace"/>
+        <xpath expr="/t[1]/t[1]/div[1]/div[3]" position="replace"/>
+        <xpath expr="/t/t/div/div[3]" position="after">
+            <div class="row">
+                <div class="col-3">
+                    <span>
+                        <strong>Display Name:</strong>
+                        <br/>
+                    </span>
+                    <span t-field="doc.partner_id.property_payment_term_id.display_name"/>
+                </div>
+                <div class="col-3"/>
+                <div class="col-3"/>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[3]" position="after">
+            <div class="row">
+                <div class="col-3">
+                    <span>
+                        <strong>طريقة التحصيل:</strong>
+                        <br/>
+                    </span>
+                    <span t-field="doc.payment_method"/>
+                </div>
+                <div class="col-3"/>
+                <div class="col-3"/>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[2]" position="inside">
+            <span>
+                <strong>Display Name:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[2]" position="inside">
+            <span t-field="doc.partner_id.property_payment_term_id.display_name"/>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[3]" position="inside">
+            <span>
+                <strong>Payment location:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[3]" position="inside">
+            <span t-field="doc.partner_id.x_studio_payment_location"/>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[5]" position="replace"/>
+        <xpath expr="/t/t/div/div[4]/div[1]/span[1]/strong" position="replace">
+            <strong>طريقة التحصيل:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[2]/span[1]/strong" position="replace">
+            <strong>وقت الدفع:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[3]/span[1]/strong" position="replace">
+            <strong>مكان التحصيل:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[2]/span[1]/strong" position="replace">
+            <strong>الشركة:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[4]/span[1]/strong" position="replace">
+            <strong>الفرع:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[3]/span[1]/strong" position="replace">
+            <strong>الرقم الضريبي:</strong>
+        </xpath>
+        <xpath expr="/t/t/div/div[2]/div[1]/span[1]/strong" position="replace">
+            <strong>إسم المنشأة:</strong>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[4]/div[3]" position="attributes">
+            <attribute name="t-if">doc.partner_id.x_studio_payment_location</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[4]/div[2]" position="attributes">
+            <attribute name="t-if">doc.partner_id.property_payment_term_id</attribute>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[4]/div[1]" position="attributes">
+            <attribute name="t-if">doc.partner_id.payment_method</attribute>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[4]" position="inside">
+            <span>
+                <strong>Online Payment Number:</strong>
+                <br/>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/div[4]/div[4]" position="inside">
+            <span t-field="doc.online_payment_number"/>
+        </xpath>
+        <xpath expr="/t[1]/t[1]/div[1]/div[4]/div[4]" position="attributes">
+            <attribute name="t-if">doc.online_payment_number</attribute>
+        </xpath>
+        <xpath expr="/t/t/div/h2/t[2]/span" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">Pro-Forma Invoice # </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/h2/t[2]/span/p" position="replace">
+            <span>
+                <p style="margin-bottom: 0px;">
+                    <span class="text-left" t-field="doc.name"/>
+                    - إذن استالم طلب رقم
+                </p>
+            </span>
+        </xpath>
+        <xpath expr="/t/t/div/h2/span" position="replace">
+        </xpath>
+        <!--        end of studio customizations-->
+        <xpath expr="//t[@t-set='address']" position="replace">
+        </xpath>
+        <xpath expr="//t[@t-if='doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id']" position="replace">
+        </xpath>
+
+        <xpath expr="//div[@id='informations']" position="before">
+
+            <t t-if="doc.payment_term_id">
+                <div class="mb-1">
+                    <strong>Payment Terms:&#160;</strong>
+                    <t t-out="doc.payment_term_id.name"/>
+                </div>
+            </t>
+            <t t-if="doc.x_studio_related_field_SiJCe">
+                <div class="mb-1">
+                    <strong>Payment Location:&#160;</strong>
+                    <t t-out="doc.x_studio_related_field_SiJCe"/>
+                </div>
+            </t>
+            <t t-if="doc.partner_id.x_studio_many2one_field_y6Djm">
+                <div class="mb-1">
+                    <strong>Payment Type:&#160;</strong>
+                    <t t-out="doc.partner_id.x_studio_many2one_field_y6Djm.x_name"/>
+                </div>
+            </t>
+            <tr>
+                <t>
+                    <div class="mb-1">
+                        <strong>رقم الشحنة:&#160;</strong>
+                        <p>(<span t-field="doc.number_of_deliveries"/> / <span t-field="doc.current_delivery_number"/>
+                            )</p>
+                    </div>
+                </t>
+                <t t-if="doc.payment_method">
+                    <div class="mb-1" style="margin-right:0px;">
+                        <strong>طريقة التحصيل:&#160;</strong>
+                        <!--                    line break-->
+                        <p>
+                            <t t-if="doc.payment_method == 'cash'">نقدي</t>
+                            <t t-if="doc.payment_method == 'online'">أونلاين</t>
+                            <t t-if="doc.payment_method == 'pos'">مكنة الفيزا</t>
+                            <t t-if="doc.payment_method == 'link'">لينك للدفع عند التوصيل</t>
+                        </p>
+                    </div>
+                </t>
+            </tr>
+            <t t-if="doc.online_payment_number">
+                <div class="mb-1">
+                    <strong>Online Payment Number:&#160;</strong>
+                    <t t-out="doc.online_payment_number"/>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//table[hasclass('o_main_table')]" position="before">
+            <br/>
+            <br/>
+            <table class="table table-sm" id="o_remaining_qty_table" t-if="doc.remaining_order_line_ids">
+                <thead>
+                    <tr>
+                        <th class="text-center">المنتج</th>
+                        <th class="text-center">الكمية المتبقية في الشحنة القادمة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="doc.remaining_order_line_ids" t-as="remaining">
+                        <tr>
+                            <td class="text-center">
+                                <t t-esc="remaining.product_id.name"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="remaining.remaining_qty"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+            <br/>
+            <br/>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="inside">
+            <t t-if="doc.partner_shipping_id.active_time_windows">
+                <div class="col-auto col-6 mw-100 mb-2">
+                    <strong>مواعيد التوصيل:&#160;</strong>
+                    <p class="m-0" t-field="doc.partner_shipping_id.active_time_windows_str"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <template id="sale.report_saleorder_pro_forma">
+        <t t-call="web.html_container">
+            <t t-set="is_pro_forma" t-value="True"/>
+            <t t-set="docs" t-value="docs.with_context(proforma=True)"/>
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sale.report_saleorder_document" t-lang="doc.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

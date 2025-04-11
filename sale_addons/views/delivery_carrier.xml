@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="delivery_carrier_stock_addons_inherit" model="ir.ui.view">
+		<field name="name">delivery.carrier.stock.addons.inherit</field>
+		<field name="model">delivery.carrier</field>
+		<field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='free_over']" position="after">
+				<field name="is_default"/>
+				<field name="is_online_charge" />
+			</xpath>
+		</field>
+	</record>
+</odoo>

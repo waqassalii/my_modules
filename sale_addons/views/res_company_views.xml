@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="sale_addons_res_company_form_view_inherit">
+        <field name="name">sale.addons.res.company.form.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="timeout_hours" widget="float_time"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

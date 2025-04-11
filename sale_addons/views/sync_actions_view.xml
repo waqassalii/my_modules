@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.actions.server" id="product_template_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="product.model_product_template" />
+        <field name="binding_model_id" ref="product.model_product_template" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_group_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="product.model_product_category" />
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="res_partner_entity_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <!-- <record model="ir.actions.server" id="promo_sync_action">
+        <field name="name">Update</field>
+        <field name="model_id" ref="coupon.model_coupon_program" />
+        <field name="binding_model_id" ref="coupon.model_coupon_program" />
+        <field name="state">code</field>
+        <field name="code">
+            records.update_promo()
+        </field>
+    </record> -->
+
+    <record model="ir.actions.server" id="invoice_post_sync_action">
+        <field name="name">Post Invoices</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="code">
+            records.action_post()
+        </field>
+    </record>
+
+     <record model="ir.actions.server" id="invoice_upload_action">
+        <field name="name">Upload ETA</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="code">
+            records.upload_invoice()
+        </field>
+    </record>
+
+     <record model="ir.actions.server" id="invoice_retry_action">
+        <field name="name">Retry ETA</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="code">
+            records.retry_invoice_upload()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="invoice_update_sync_action">
+        <field name="name">Sync Invoices</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="groups_id" eval="[(4,ref('base.group_no_one'))]"/>
+        <field name="code">
+            records.sync_invoices()
+        </field>
+    </record>
+
+    <!-- <record model="ir.actions.server" id="partner_balance_sync_action">
+        <field name="name">Update Balance</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="groups_id" eval="[(4,ref('base.group_no_one'))]" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_balance_hasura()
+        </field>
+    </record> -->
+
+    <record model="ir.actions.server" id="res_sale_order_action">
+        <field name="name">Sync Sale Order</field>
+        <field name="model_id" ref="sale.model_sale_order" />
+        <field name="binding_model_id" ref="sale.model_sale_order" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="res_partner_entity_verify_action">
+        <field name="name">Verify User</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+            records.verify_user()
+        </field>
+    </record>
+
+    <!-- <record model="ir.actions.server" id="payment_term_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="account.model_account_payment_term"/>
+        <field name="binding_model_id" ref="account.model_account_payment_term" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_brand_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="model_product_brand"/>
+        <field name="binding_model_id" ref="model_product_brand" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_pricelist_sync_action">
+        <field name="name">Sync Data</field>
+        <field name="model_id" ref="product.model_product_pricelist"/>
+        <field name="binding_model_id" ref="product.model_product_pricelist" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    
+
+    <record model="ir.actions.server" id="product_category_sync_action">
+        <field name="name">Sync Category Data</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data("category")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_sub_sync_action">
+        <field name="name">Sync Sub Category Data</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data("sub")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="group_mark_action">
+        <field name="name">Mark as group</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.mark_type("group")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="category_mark_action">
+        <field name="name">Mark as catgeory</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.mark_type("cat")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="sub_category_mark_action">
+        <field name="name">Mark as sub category</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category" />
+        <field name="state">code</field>
+        <field name="code">
+            records.mark_type("sub")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_template_sync_action">
+        <field name="name">Sync Product Template</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="product_packaging_sync_action">
+        <field name="name">Sync Product Packages</field>
+        <field name="model_id" ref="product.model_product_packaging"/>
+        <field name="binding_model_id" ref="product.model_product_packaging" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="res_sale_order_action">
+        <field name="name">Sync Sale Order</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="res_partner_sync_action">
+        <field name="name">Sync Companies</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data("contact")
+        </field>
+    </record>
+
+   
+    <record model="ir.actions.server" id="res_partner_branch_sync_action">
+        <field name="name">Sync Branches</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data("delivery")
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="seperate_entities_sync_action">
+        <field name="name">Seperate Entities</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="state">code</field>
+        <field name="code">
+            records.seperate_entities()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="sync_invoices">
+        <field name="name">Sync Invoices</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_lines()
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="sync_payments">
+        <field name="name">Sync Payments</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="binding_model_id" ref="account.model_account_payment" />
+        <field name="state">code</field>
+        <field name="code">
+            records.sync_data()
+        </field>
+    </record> -->
+
+</odoo>

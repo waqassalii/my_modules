@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mark_delivered_wizard_view_form" model="ir.ui.view">
+        <field name="name">mark.delivered.wizard.view.form</field>
+        <field name="model">mark.delivered.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mark as delivered">
+                <sheet>
+                    <p>All pending transfers will be cancelled and the promotion will be recalculated based on the delivered quantity. Are you sure that you want to proceed?</p>
+                    <group>
+                        <group>
+                            <field name="reason" required="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Confirm" name="action_mark_done" type="object" class="oe_highlight"/>
+                    <button string="Cancel"  class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
